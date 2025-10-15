@@ -37,8 +37,8 @@ class BTree:
             return
 
         print(root.data, end=" ")
-        self.dfs(root.left)
-        self.dfs(root.right)
+        self.recursiveDfs(root.left)
+        self.recursiveDfs(root.right)
     
     # Iterative
     def iterativeDfs(self, root):
@@ -60,26 +60,26 @@ class BTree:
         
     # ===================== BFS =====================
     def bfs(self, root):
-        stack = [root]          # Queue with only root in it
+        q = [root]          # Queue with only root in it
         
         # While there is something in stack
-        while(stack.__len__() != 0):
+        while(q.__len__() != 0):
         
             # Grabbing the first element always from the queue
-            node = stack.pop(0)
+            node = q.pop(0)
             
             print(node.data, end=" ")
             
             # Pushing left and right child of current node into the stack
             if (node.left):
-                stack.append(node.left)
+                q.append(node.left)
             if (node.right):
-                stack.append(node.right)
+                q.append(node.right)
         
 
 
 tree = BTree([1,2,4,None,None, 5, None, None, 3, 6, None, None, 7, None, None ])
-# tree.recursiveDfs(tree.root)
+tree.recursiveDfs(tree.root)
 # tree.iterativeDfs(tree.root)
-tree.bfs(tree.root)
+# tree.bfs(tree.root)
 print()
