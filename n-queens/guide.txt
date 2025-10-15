@@ -1,0 +1,143 @@
+The Three Attack Patterns
+=========================
+if board[i] == col or \           # Same column attack
+   board[i] - i == col - row or \ # Diagonal attack (top-left to bottom-right)
+   board[i] + i == col + row:     # Diagonal attack (top-right to bottom-left)
+    return False
+
+Example Walkthrough
+Let's say we have a 4×4 board and want to check if we can place a queen at (2, 1):
+
+Current board state:
+board = [1, 3, ?, ?]  # Queens at (0,1) and (1,3)
+
+   0 1 2 3
+0  . Q . .
+1  . . . Q
+2  . ? . .  ← We want to place here
+3  . . . .
+
+i = 0: Queen at (0, 1)
+
+Same column check:
+
+    board[0] == 1 ✓ (CONFLICT!)
+
+The function returns False immediately
+
+----------------------------------------------------------
+
+Diagonal Attack Explanation
+The diagonal attack checks are based on mathematical properties of diagonals on a chessboard. Let me explain both diagonal formulas:
+
+The Two Diagonal Formulas
+board[i] - i == col - row  # Diagonal 1: top-left to bottom-right (\)
+board[i] + i == col + row  # Diagonal 2: top-right to bottom-left (/)
+
+Why These Formulas Work?
+Maths dude, wherever you are... it'll keep haunting you !
+
+========== Diagonal 1: col - row (↘ direction) ==========
+
+All cells on the same top-left to bottom-right diagonal have the same difference between their column and row indices.
+
+Example with 5×5 board:
+
+    0  1  2  3  4  (columns)
+--|-----------------
+0 |  2  3  4  5  6   ← col - row values
+1 |  1  2  3  4  5
+2 |  0  1  2  3  4
+3 | -1  0  1  2  3
+4 | -2 -1  0  1  2
+
+Notice the diagonals (↘):
+- Diagonal with value 2: (0,2), (1,3), (2,4)
+- Diagonal with value 0: (0,0), (1,1), (2,2), (3,3), (4,4)
+- Diagonal with value -1: (1,0), (2,1), (3,2), (4,3)
+
+========== Diagonal 2: col + row (↙ direction) ==========
+All cells on the same top-right to bottom-left diagonal have the same sum of their column and row indices.
+
+Example with 5×5 board:
+
+    0   1   2   3   4   (columns)
+--|------------------
+0 | 0   1   2   3   4   ← col + row values
+1 | 1   2   3   4   5
+2 | 2   3   4   5   6
+3 | 3   4   5   6   7
+4 | 4   5   6   7   8
+
+Notice the diagonals (↙):
+- Diagonal with value 4: (0,4), (1,3), (2,2), (3,1), (4,0)
+- Diagonal with value 2: (0,2), (1,1), (2,0)
+- Diagonal with value 6: (2,4), (3,3), (4,2)
+
+
+Concrete Example from Code
+
+n = 4
+board = [1, 3, 0, 2]  # Already placed queens
+
+# Visual representation:
+    0   1   2   3
+--|------------------
+0 | .   Q   .   .   (0,1)
+1 | .   .   .   Q   (1,3)
+2 | Q   .   .   .   (2,0)
+3 | .   .   Q   .   (3,2)
+
+Now let's check if we can place a queen at position (2, 2):
+
+is_safe(row=2, col=2)
+
+# Check against queen at row 0, column 1:
+i = 0, board[0] = 1
+
+# Column check:
+board[0] == 2  →  1 == 2  →  False ✓ (different columns)
+
+# Diagonal 1 check (↘):
+board[0] - 0 == 2 - 2
+1 - 0 == 0
+1 == 0  →  False ✓ (different diagonals)
+
+# Diagonal 2 check (↙):
+board[0] + 0 == 2 + 2
+1 + 0 == 4
+1 == 4  →  False ✓ (different diagonals)
+
+# Check against queen at row 1, column 3:
+i = 1, board[1] = 3
+
+# Column check:
+board[1] == 2  →  3 == 2  →  False ✓
+
+# Diagonal 1 check (↘):
+board[1] - 1 == 2 - 2
+3 - 1 == 0
+2 == 0  →  False ✓
+
+# Diagonal 2 check (↙):
+board[1] + 1 == 2 + 2
+3 + 1 == 4
+4 == 4  →  True ✗  (CONFLICT!)
+
+Visual showing the conflict:
+
+    0   1   2   3
+--|------------------
+0 | .   Q   .   .   (0,1)
+1 | .   .   .   Q   (1,3)
+2 | .   .   X   .   (2,2)  ← Conflict here
+3 | .   .   Q   .   (3,2)
+
+The queen at (1,3) and position (2,2) are on the same diagonal (↙) because 1+3 = 4 and 2+2 = 4
+
+=========== Summary ==========
+
+col - row: Identifies diagonals going ↘ (same difference = same diagonal)
+col + row: Identifies diagonals going ↙ (same sum = same diagonal)
+
+If ANY previous queen shares the same column OR either diagonal value, the position is not safe!
